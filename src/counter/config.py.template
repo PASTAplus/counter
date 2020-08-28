@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+:Mod: config
+
+:Synopsis:
+
+:Author:
+    servilla
+
+:Created:
+    8/27/20
+"""
+class Config():
+
+    DB_USER = 'SECRET'
+    DB_PW = 'SECRET'
+    DB_HOST_PACKAGE = 'package.lternet.edu:5432'
+    DB_HOST_AUDIT = 'audit.lternet.edu:5432'
+    DB_DB = 'pasta'
+    DB_DRIVER = 'postgresql+psycopg2'
+
+    DN = 'SECRET'
+    PW = 'SECRET'
+
+    BASE_PACKAGE_URL = "https://pasta.lternet.edu/package"

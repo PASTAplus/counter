@@ -27,7 +27,9 @@ from counter.package import Package
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/download_counter.log"
-daiquiri.setup(level=logging.INFO, outputs=(daiquiri.output.File(logfile), "stdout",))
+daiquiri.setup(
+    level=logging.INFO, outputs=(daiquiri.output.File(logfile), "stdout",)
+)
 logger = daiquiri.getLogger(__name__)
 
 
@@ -135,17 +137,18 @@ def main(scope: str, start: str, end: str, newest: bool):
     pids = e_db.get_pids()
     p_db = PackageDB(scope)
     for pid in pids:
-        print(pid[0])
-        eml = get_eml(pid[0])
-        p = Package(eml)
-        entities = e_db.get_entities_by_pid(pid[0])
-        count = 0
-        for entity in entities:
-            count += entity.count
-            print("\t" + entity.rid)
-            entity_name = p.get_entity_name(entity.rid)
-            e_db.update(entity.rid, entity_name)
-        p_db.insert(pid=pid[0], doi=p.doi, title=p.title, count=count)
+        if p_db.get(pid[0]) is None:
+            print(pid[0])
+            eml = get_eml(pid[0])
+            p = Package(eml)
+            entities = e_db.get_entities_by_pid(pid[0])
+            count = 0
+            for entity in entities:
+                count += entity.count
+                print("\t" + entity.rid)
+                entity_name = p.get_entity_name(entity.rid)
+                e_db.update(entity.rid, entity_name)
+            p_db.insert(pid=pid[0], doi=p.doi, title=p.title, count=count)
 
     return 0
 

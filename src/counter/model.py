@@ -66,6 +66,17 @@ class PackageDB:
             logger.error(ex)
         return p
 
+    def get(self, pid: str) -> Query:
+        try:
+             p = (
+                self.session.query(Package)
+                .filter(Package.pid == pid)
+                .first()
+            )
+        except NoResultFound as ex:
+            logger.error(ex)
+        return p
+
     def insert(
         self,
         pid: str,

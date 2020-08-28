@@ -95,8 +95,9 @@ class Entity(Base):
 
     rid = Column(String(), primary_key=True)
     pid = Column(String(), nullable=False)
-    name = Column(String(), nullable=True)
+    datecreated = Column(DateTime(), nullable=False)
     count = Column(Integer(), nullable=False)
+    name = Column(String(), nullable=True)
 
 
 class EntityDB:
@@ -146,14 +147,16 @@ class EntityDB:
         self,
         rid: str,
         pid: str,
+        datecreated: datetime,
         name: str = None,
-        count: int = 0
+        count: int = 0,
     ):
         e = Entity(
             rid=rid,
             pid=pid,
-            name=name,
-            count=count
+            datecreated=datecreated,
+            count=count,
+            name=name
         )
         try:
             self.session.add(e)

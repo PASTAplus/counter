@@ -56,7 +56,7 @@ def get_entities(sql: str) -> Set:
     entities = pasta_db.query(Config.DB_HOST_PACKAGE, sql)
     e = set()
     for entity in entities:
-        e.add(entity[0])
+        e.add((entity[0], entity[1]))
     return e
 
 
@@ -88,12 +88,14 @@ def main(scope: str, start: str, end: str, newest: bool):
             SCOPE: PASTA+ scope value
     """
     sql_entities_all = (
-        "SELECT resource_id FROM datapackagemanager.resource_registry "
+        "SELECT resource_id, date_created "
+        "FROM datapackagemanager.resource_registry "
         "WHERE datapackagemanager.resource_registry.resource_type='data' "
         "AND scope='<SCOPE>' AND date_deactivated IS NULL"
     )
     sql_entities_newest = (
-        "SELECT resource_id FROM datapackagemanager.resource_registry "
+        "SELECT resource_id, date_created "
+        "FROM datapackagemanager.resource_registry "
         "JOIN most_recent_package_ids "
         "ON resource_registry.package_id=most_recent_package_ids.package_id "
         "WHERE datapackagemanager.resource_registry.resource_type='data' "
@@ -105,27 +107,30 @@ def main(scope: str, start: str, end: str, newest: bool):
         "AND NOT userid='robot' AND resourceid='<RID>'"
     )
 
-    if start is not None:
-        sql_count += f" AND entrytime >= '{start}'"
-
-    if end is not None:
-        sql_count += f" AND entrytime <= '{end}'"
-
     if newest:
         sql_entities = sql_entities_newest.replace("<SCOPE>", scope)
     else:
         sql_entities = sql_entities_all.replace("<SCOPE>", scope)
 
+    if start is not None:
+        sql_count += f" AND entrytime >= '{start}'"
+
+    if end is not None:
+        sql_count += f" AND entrytime <= '{end}'"
+        sql_entities += f" AND date_created <= '{end}'"
+
     entities = get_entities(sql_entities)
     e_db = EntityDB(scope)
     for entity in entities:
-        e = e_db.get(entity)
+        e = e_db.get(entity[0])
         if e is None:
-            pid = entity_to_pid(entity)
-            sql = sql_count.replace("<RID>", entity)
+            pid = entity_to_pid(entity[0])
+            sql = sql_count.replace("<RID>", entity[0])
             count = pasta_db.query(Config.DB_HOST_AUDIT, sql)
-            print(f"{entity}: {count[0][0]}")
-            e_db.insert(rid=entity, pid=pid, count=count[0][0])
+            print(f"{entity[0]} - {entity[1]}: {count[0][0]}")
+            e_db.insert(
+                rid=entity[0], pid=pid, datecreated=entity[1], count=count[0][0]
+            )
 
     pids = e_db.get_pids()
     p_db = PackageDB(scope)

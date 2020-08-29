@@ -26,7 +26,7 @@ from counter.model import EntityDB, PackageDB
 from counter.package import Package
 
 cwd = os.path.dirname(os.path.realpath(__file__))
-logfile = cwd + "/download_counter.log"
+logfile = cwd + "/counter.log"
 daiquiri.setup(
     level=logging.INFO, outputs=(daiquiri.output.File(logfile), "stdout",)
 )
@@ -52,14 +52,6 @@ def get_eml(pid: str) -> str:
     r = requests.get(url, auth=(Config.DN, Config.PW))
     r.raise_for_status()
     return r.text
-
-
-def get_entities(sql: str) -> Set:
-    entities = pasta_db.query(Config.DB_HOST_PACKAGE, sql)
-    e = set()
-    for entity in entities:
-        e.add((entity[0], entity[1]))
-    return e
 
 
 start_help = (
@@ -89,47 +81,14 @@ def main(scope: str, start: str, end: str, newest: bool):
         \b
             SCOPE: PASTA+ scope value
     """
-    sql_entities_all = (
-        "SELECT resource_id, date_created "
-        "FROM datapackagemanager.resource_registry "
-        "WHERE datapackagemanager.resource_registry.resource_type='data' "
-        "AND scope='<SCOPE>' AND date_deactivated IS NULL"
-    )
-    sql_entities_newest = (
-        "SELECT resource_id, date_created "
-        "FROM datapackagemanager.resource_registry "
-        "JOIN most_recent_package_ids "
-        "ON resource_registry.package_id=most_recent_package_ids.package_id "
-        "WHERE datapackagemanager.resource_registry.resource_type='data' "
-        "AND scope='<SCOPE>' AND date_deactivated IS NULL"
-    )
-    sql_count = (
-        "SELECT COUNT(*) FROM auditmanager.eventlog "
-        "WHERE servicemethod='readDataEntity' AND statuscode=200 "
-        "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
-    )
-
-    if newest:
-        sql_entities = sql_entities_newest.replace("<SCOPE>", scope)
-    else:
-        sql_entities = sql_entities_all.replace("<SCOPE>", scope)
-
-    if start is not None:
-        sql_count += f" AND entrytime >= '{start}'"
-
-    if end is not None:
-        sql_count += f" AND entrytime <= '{end}'"
-        sql_entities += f" AND date_created <= '{end}'"
-
-    entities = get_entities(sql_entities)
+    entities = pasta_db.get_entities(scope, newest, end)
     e_db = EntityDB(scope)
     for entity in entities:
         e = e_db.get(entity[0])
         if e is None:
             pid = entity_to_pid(entity[0])
-            sql = sql_count.replace("<RID>", entity[0])
-            count = pasta_db.query(Config.DB_HOST_AUDIT, sql)
-            print(f"{entity[0]} - {entity[1]}: {count[0][0]}")
+            count = pasta_db.get_count(entity[0], start, end)
+            print(f"{entity[0]} - {entity[1]}: {count}")
             e_db.insert(
                 rid=entity[0], pid=pid, datecreated=entity[1], count=count[0][0]
             )

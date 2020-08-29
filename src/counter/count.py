@@ -106,7 +106,7 @@ def main(scope: str, start: str, end: str, newest: bool):
     sql_count = (
         "SELECT COUNT(*) FROM auditmanager.eventlog "
         "WHERE servicemethod='readDataEntity' AND statuscode=200 "
-        "AND NOT userid='robot' AND resourceid='<RID>'"
+        "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
     )
 
     if newest:

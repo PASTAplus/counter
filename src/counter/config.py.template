@@ -12,7 +12,9 @@
 :Created:
     8/27/20
 """
-class Config():
+
+
+class Config:
 
     DB_USER = 'SECRET'
     DB_PW = 'SECRET'

@@ -58,7 +58,7 @@ class PackageDB:
 
     def get_all(self) -> Query:
         try:
-             p = (
+            p = (
                 self.session.query(Package)
                 .order_by(Package.pid.asc())
             )
@@ -106,7 +106,7 @@ class Entity(Base):
 
     rid = Column(String(), primary_key=True)
     pid = Column(String(), nullable=False)
-    datecreated = Column(DateTime(), nullable=False)
+    date_created = Column(DateTime(), nullable=False)
     count = Column(Integer(), nullable=False)
     name = Column(String(), nullable=True)
 
@@ -131,6 +131,16 @@ class EntityDB:
         except NoResultFound as ex:
             logger.error(ex)
             self.session.rollback()
+        return e
+
+    def get_all(self) -> Query:
+        try:
+            e = (
+                self.session.query(Entity)
+                .order_by(Entity.rid.asc())
+            )
+        except NoResultFound as ex:
+            logger.error(ex)
         return e
 
     def get_pids(self):
@@ -158,14 +168,14 @@ class EntityDB:
         self,
         rid: str,
         pid: str,
-        datecreated: datetime,
+        date_created: datetime,
         name: str = None,
         count: int = 0,
     ):
         e = Entity(
             rid=rid,
             pid=pid,
-            datecreated=datecreated,
+            date_created=date_created,
             count=count,
             name=name
         )

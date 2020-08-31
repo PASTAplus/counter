@@ -16,14 +16,15 @@
 
 class Config:
 
-    DB_USER = 'SECRET'
-    DB_PW = 'SECRET'
+    DB_USER = None
+    DB_PW = None
     DB_HOST_PACKAGE = 'package.lternet.edu:5432'
     DB_HOST_AUDIT = 'audit.lternet.edu:5432'
     DB_DB = 'pasta'
     DB_DRIVER = 'postgresql+psycopg2'
 
-    DN = 'SECRET'
-    PW = 'SECRET'
+    DN = None
+    PW = None
 
     BASE_PACKAGE_URL = "https://pasta.lternet.edu/package"
+    BASE_AUDIT_URL = "https://pasta.lternet.edu/audit"

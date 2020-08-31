@@ -12,6 +12,7 @@
 :Created:
     8/27/20
 """
+from datetime import datetime
 from typing import Set
 
 import daiquiri
@@ -24,7 +25,7 @@ from counter.config import Config
 logger = daiquiri.getLogger(__name__)
 
 
-def get_count(rid: str, start: str, end: str) -> int:
+def get_entity_count(rid: str, start: str, end: str) -> int:
     sql_count = (
         "SELECT COUNT(*) FROM auditmanager.eventlog "
         "WHERE servicemethod='readDataEntity' AND statuscode=200 "
@@ -40,7 +41,7 @@ def get_count(rid: str, start: str, end: str) -> int:
         sql_count += f" AND entrytime <= '{end}'"
 
     count = query(Config.DB_HOST_AUDIT, sql_count)
-    return count
+    return count[0][0]
 
 
 def get_entities(scope: str, newest: bool, end: str) -> Set:
@@ -70,7 +71,13 @@ def get_entities(scope: str, newest: bool, end: str) -> Set:
     entities = query(Config.DB_HOST_PACKAGE, sql_entities)
     e = set()
     for entity in entities:
-        e.add((entity[0], entity[1]))
+        date_created = entity[1].isoformat()
+        dp = date_created.find(".")
+        if dp != -1:
+            # Remove fractional seconds
+            date_created = datetime.fromisoformat(date_created[:dp])
+        e.add((entity[0], date_created))
+        logger.info(f"get_entities: {entity[0]} - {date_created}")
     return e
 
 

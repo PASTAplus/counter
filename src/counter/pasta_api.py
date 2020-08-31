@@ -12,6 +12,7 @@
 :Created:
     8/29/20
 """
+from datetime import datetime
 from typing import List
 
 import daiquiri
@@ -25,7 +26,7 @@ logger = daiquiri.getLogger(__name__)
 
 
 def get_entities(scope: str, newest: bool, end: str) -> List:
-    entitities = list()
+    entities = list()
     name_url = f"{Config.BASE_PACKAGE_URL}/name/eml/"
     pids = get_pids(scope, newest)
     for pid in pids:
@@ -35,12 +36,53 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
         r.raise_for_status()
         rids = [_.split(",")[0] for _ in r.text.strip().split("\n")]
         for rid in rids:
+            logger.info(f"get_entities: {rid}")
             rid = (
                 f"{Config.BASE_PACKAGE_URL}/data/eml/{scope}/{identifier}"
                 f"/{revision}/{rid}"
             )
-            entitities.append((rid,))
-    return entitities
+            rmd_url = rid.replace("/data/eml/", "/data/rmd/eml/")
+            date_created = get_entity_date_created(rmd_url)
+            entities.append((rid, date_created))
+            logger.info(f"get_entities: {rid} - {date_created}")
+        if end is not None:
+            end_date = datetime.fromisoformat(end)
+            for entity in entities:
+                if entity[1] > end_date:
+                    logger.info(f"get_entities: removing {entity[0]}")
+                    entities.remove(entity)
+    return entities
+
+
+def get_entity_count(rid: str, start: str, end: str) -> int:
+    count_url = (
+        Config.BASE_AUDIT_URL +
+        "/count?serviceMethod=readDataEntity&status=200"
+    )
+    if start is not None:
+        count_url += f"&fromTime={start}"
+    if end is not None:
+        count_url += f"&toTime={end}"
+    count_url += f"&resourceId={rid}"
+    logger.info(f"get_entity_count: {count_url}")
+    r = requests.get(count_url, auth=(Config.DN, Config.PW))
+    r.raise_for_status()
+    count = int(r.text.strip())
+    return count
+
+
+def get_entity_date_created(rmd_url: str) -> datetime:
+    r = requests.get(rmd_url, auth=(Config.DN, Config.PW))
+    r.raise_for_status()
+    rmd = etree.fromstring(r.text.encode("utf-8"))
+    date_created = rmd.find("./dateCreated").text.strip()
+    dp = date_created.find(".")
+    if dp != -1:
+        # Remove fractional seconds
+        date_created = date_created[:dp]
+    dt = datetime.fromisoformat(date_created)
+    logger.info(f"get_entity_date_created: {dt}")
+    return dt
 
 
 def get_pids(scope: str, newest: bool) -> List:
@@ -65,7 +107,9 @@ def get_pids(scope: str, newest: bool) -> List:
                         series[f"{scope}.{identifier}"] = revision
             else:
                 pids.append(f"{scope}.{identifier}.{revision}")
+                logger.info(f"get_pids: {scope}.{identifier}.{revision}")
     if newest:
         for scope_id, revision in series.items():
             pids.append(f"{scope_id}.{revision}")
+            logger.info(f"get_pids: {scope_id}.{revision}")
     return pids

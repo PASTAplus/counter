@@ -13,6 +13,7 @@
     8/27/20
 """
 from lxml import etree
+import requests
 
 from counter.config import Config
 from counter import pasta_db
@@ -35,6 +36,7 @@ def get_entity_name(dataset, rid: str):
 class Package:
     def __init__(self, eml: str):
         self._eml = etree.fromstring(eml.encode("utf-8"))
+        self._pid = self._get_package_id()
         self._title = self._get_title()
         self._doi = self._get_doi()
 
@@ -53,18 +55,32 @@ class Package:
             if alt_id.get("system") == "https://doi.org":
                 doi = clean(alt_id.xpath("string()"))
         if doi is None:
-            pid = self._get_package_id()
-            sql = (
-                "SELECT doi FROM datapackagemanager.resource_registry "
-                f"WHERE package_id='{pid}' "
-                "AND resource_type='dataPackage'"
-            )
-            _ = pasta_db.query(Config.DB_HOST_PACKAGE, sql)
-            doi = _[0][0]
+            if Config.USE_DB:
+                pid = self._get_package_id()
+                sql = (
+                    "SELECT doi FROM datapackagemanager.resource_registry "
+                    f"WHERE package_id='{pid}' "
+                    "AND resource_type='dataPackage'"
+                )
+                _ = pasta_db.query(Config.DB_HOST_PACKAGE, sql)
+                if len(_) == 1:
+                    doi = _[0][0]
+            else:
+                pid = self._get_package_id()
+                scope, identifier, revision = pid.split(".")
+                doi_url = (
+                    f"{Config.BASE_PACKAGE_URL}/doi/eml/{scope}/"
+                    f"{identifier}/{revision}"
+                )
+                r = requests.get(doi_url, auth=(Config.DN, Config.PW))
+                r.raise_for_status()
+                doi = r.text.strip()
         return doi
 
     def _get_package_id(self) -> str:
-        pid = self._eml.get("packageId")
+        _ = self._eml.get("packageId")
+        scope, identifier, revision = _.split(".")
+        pid = f"{scope}.{int(identifier)}.{int(revision)}"
         return pid
 
     def _get_title(self) -> str:

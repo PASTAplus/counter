@@ -72,6 +72,20 @@ Options:
 
 ```
 
+Running *counter* only requires the **SCOPE** of the data package of interest
+and the **CREDENTIALS** for your EDI LDAP account, and of course, the *start*
+and *end* dates of the time period you would like to analyze:
+
+```
+counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "uid=EDI,o=EDI,dc=edirepository,dc=org:<PASSWPRD>"
+```
+Analysis times depend on the number of data entities found within the time
+period and how busy PASTA+ is when running *counter*. In general, you can
+expect *counter* to take between 10-30 seconds per entity. And since *counter*
+utilizes a considerable number of PASTA+ REST API calls to perform the analysis,
+its execution will result in PASTA+ becoming quite busy, naturally. With this
+in mind, please be considerate of other users when running *counter* -- thanks!
+
 ## *counter* output
 
 Data collected by *counter* is motivated by the needs of information managers who need to report download

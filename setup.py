@@ -12,7 +12,7 @@
     8/27/2020
 """
 from os import path
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 here = path.abspath(path.dirname(__file__))
@@ -32,7 +32,7 @@ setup(
     author="PASTA+ project",
     url="https://github.com/PASTAplus/counter",
     license=full_license,
-    packages=find_packages(where="src"),
+    packages=["counter"],
     include_package_data=True,
     exclude_package_data={"": ["settings.py, properties.py, config.py"],},
     package_dir={"": "src"},

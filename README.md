@@ -77,7 +77,7 @@ and the **CREDENTIALS** for your EDI LDAP account, and of course, the *start*
 and *end* dates of the time period you would like to analyze:
 
 ```
-counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "uid=EDI,o=EDI,dc=edirepository,dc=org:<PASSWPRD>"
+counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "<DISTINGUISHED_NAME>:<PASSWORD>"
 ```
 Analysis times depend on the number of data entities found within the time
 period and how busy PASTA+ is when running *counter*. In general, you can

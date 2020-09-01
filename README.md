@@ -89,9 +89,11 @@ in mind, please be considerate of other users when running *counter* -- thanks!
 
 ## *counter* output
 
-Data collected by *counter* is motivated by the needs of information managers who need to report download
-statistics to colleagues and funding agencies. Two sets of data are collected: 1) download metrics at the
-data entity level and 2) and basic metadata at the data package level (see table schemas below).
+Data collected by *counter* is motivated by the needs of information managers
+who need to report download statistics to colleagues and funding agencies. Two
+sets of data are collected: 1) download metrics at the data entity level and 2)
+basic metadata at the data package level, including an aggregated sum of all
+data entity counts within the data package (see table schemas below).
 
 ### table *entities*:
 

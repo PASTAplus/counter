@@ -39,8 +39,9 @@ from https://www.anaconda.com/products/individual, and then create a working `co
 virtual environment using `conda env create --file environment-min.yml`. `conda`
 will use the dependency specifications in the `environment-min.yml` file to install
 the appropriate Python3 packages. Once installed in this manner, you may execute
-*counter* using either `python counter.py <OPTIONS> SCOPE CREDENTIALS` or by
-installing *counter* using `pip install .` and then running it directly from the
+*counter* by first activating the *counter* virtual environment (`conda activate
+counter`), and then using either `python counter.py <OPTIONS> SCOPE CREDENTIALS` or
+by installing *counter* using `pip install .` and then running it directly from the
 command line as `counter <OPTIONS> SCOPE CREDENTIALS`. See below for specific
 options and required arguments.
 

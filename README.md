@@ -71,3 +71,34 @@ Options:
   -h, --help        Show this message and exit
 
 ```
+
+## *counter* output
+
+Data collected by *counter* is motivated by the needs of information managers who need to report download
+statistics to colleagues and funding agencies. Two sets of data are collected: 1) download metrics at the
+data entity level and 2) and basic metadata at the data package level (see table schemas below).
+
+### table *entities*:
+
+1. **rid** (resource identifier) - string, primary key
+1. **pid** (package identifier) - string
+1. **date_created** (date of entity creation in PASTA+) - datetime
+1. **count** (download count) - integer
+1. **name** (entity common name) - string
+
+### table *packages*:
+
+1. **pid** (package identifier) - string, primary key
+1. **doi** (package digital object identifier) - string
+1. **title** (package title) - string
+1. **count** (aggregated download count) - integer
+
+### Thoughts on schema design
+
+The two tables provide a means for users to generate any number of reports, including a simple summary
+report by using only the *packages* table. One key aspect of the *entities* table is the `date_created`
+value: one can better understand count values by placing the data entity into a timeline perspective,
+especially if counts seem unusually low. For example, if your end date is 2020-01-01T00:00:00, and the date_created
+of a data entity is 2019-12-15T14:03:12, then a low download count may be reasonable since the data entity was only 
+avaiable 16 days for download. If, however, the date_created was 2013-12-15T4:03:12, I would be suspicious of
+the low count.

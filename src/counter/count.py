@@ -94,8 +94,8 @@ def main(
     quiet: bool,
 ):
     """
-        Perform analysis of data entity downloads for given SCOPE from
-        START_DATA to END_DATE.
+        Perform analysis of data entity downloads for the given PASTA+ SCOPE
+        from START_DATE to END_DATE.
 
         \b
             SCOPE: PASTA+ scope value

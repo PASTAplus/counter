@@ -1,16 +1,17 @@
 # counter
-Reports data package and entity read counts, and more...
+Reports data package and entity read counts from the EDI data repository, and
+more...
 
 ## How to use
 ```
 Usage: counter [OPTIONS] SCOPE CREDENTIALS
 
-  Perform analysis of data entity downloads for given SCOPE from START_DATA
-  to END_DATE.
+  Perform analysis of data entity downloads for the given PASTA+ SCOPE from
+  START_DATE to END_DATE.
 
-  SCOPE: PASTA+ scope value
-  CREDENTIALS: User credentials in the form 'DN:PW', where DN is the
-    EDI LDAP distinguished name and PW is the corresponding password
+      SCOPE: PASTA+ scope value
+      CREDENTIALS: User credentials in the form 'DN:PW', where DN is the
+          EDI LDAP distinguished name and PW is the corresponding password
 
 Options:
   -s, --start TEXT  Start date from which to begin search in ISO 8601
@@ -24,5 +25,6 @@ Options:
   -d, --db          Use the PASTA+ database directly (must have authorization)
   -c, --csv         Write out CSV tables in addition to the SQLite database
   -q, --quiet       Silence standard output
-  -h, --help        Show this message and exit.
+  -h, --help        Show this message and exit
+
 ```

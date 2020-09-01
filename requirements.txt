@@ -1,0 +1,7 @@
+python==3.8
+requests==2.24.0
+lxml==4.5.2
+daiquiri==2.1.1
+click==7.1.2
+sqlalchemy==1.3.19
+psycopg2==2.8.5

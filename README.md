@@ -2,7 +2,7 @@
 Reports data package and entity read counts from the EDI data repository, and
 more...
 
-# How does *counter* work
+## How does *counter* work
 
 *counter* analyzes download metrics for each data package in the EDI data
 repository during the period of time selected using the "start" and "end"

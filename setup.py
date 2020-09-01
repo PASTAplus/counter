@@ -25,7 +25,7 @@ with open(path.join(here, 'LICENSE'), encoding='utf-8') as f:
 
 setup(
     name="counter",
-    version="2020.08.27",
+    version="2020.08.31",
     description="Reports data package and entity read counts, and more...",
     long_description=long_description,
     long_description_content_type="text/markdown",

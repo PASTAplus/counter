@@ -29,9 +29,25 @@ approach is much faster, but does require access privileges to PASTA+ databases.
 ## How to install *counter*
 
 The most direct and straightforward way to install *counter* is to clone the
-*counter* github repository `git clone https://github.com/PASTAplus/counter.git`
-and install the necessary Python3 dependencies found in `environment-min.yml`
-or `requirements.txt`.
+*counter* github repository, create a Python virtual environment and activate,
+install the necessary Python dependencies found in `environment-min.yml`
+or `requirements.txt`, and then copy the file `config.py.template` to
+`config.py`:
+
+1. `git clone https://github.com/PASTAplus/counter.git`
+1. `cd counter`
+1. `conda env create --file environment-min.yml` or `pip install
+    -r requirements.txt` (if using conda, a virtual environment will
+    be created at this step; if using another Python distribution, create
+    and activate a virtual environment per the distribution prior to doing `pip
+    install`)
+1. `cp ./src/counter/config.py.template ./src/counter/config.py`
+
+If everything is installed correctly, you should be able to run
+```
+python counter.py --help
+```
+and see the *counter* help information.
 
 Development was performed in a `conda` virtual environment using the PyCharm IDE.
 To replicate and run *counter* in this manner, you must first install `anaconda3`
@@ -44,7 +60,6 @@ counter`), and then using either `python counter.py <OPTIONS> SCOPE CREDENTIALS`
 by installing *counter* using `pip install .` and then running it directly from the
 command line as `counter <OPTIONS> SCOPE CREDENTIALS`. See below for specific
 options and required arguments.
-
 
 ## How to use *counter*
 ```

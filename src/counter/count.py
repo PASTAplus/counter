@@ -100,7 +100,8 @@ def main(
         \b
             SCOPE: PASTA+ scope value
             CREDENTIALS: User credentials in the form 'DN:PW', where DN is the
-                EDI LDAP distinguished name and PW is the corresponding password
+                full EDI LDAP distinguished name (e.g., uid=USER,o=EDI,
+                dc=edirepository,dc=org) and PW is the corresponding password
     """
     dn, pw = credentials.split(":")
     Config.DN = dn

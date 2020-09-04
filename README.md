@@ -29,7 +29,7 @@ approach is much faster, but does require access privileges to PASTA+ databases.
 ## How to install *counter*
 
 The most direct and straightforward way to install *counter* is to clone the
-*counter* github repository, create a Python virtual environment and activate,
+*counter* github repository, create and activate a Python virtual environment,
 install the necessary Python dependencies found in `environment-min.yml`
 or `requirements.txt`, and then copy the file `config.py.template` to
 `config.py`:

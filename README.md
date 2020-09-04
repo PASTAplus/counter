@@ -70,7 +70,8 @@ Usage: counter [OPTIONS] SCOPE CREDENTIALS
 
       SCOPE: PASTA+ scope value
       CREDENTIALS: User credentials in the form 'DN:PW', where DN is the
-          EDI LDAP distinguished name and PW is the corresponding password
+          full EDI LDAP distinguished name (e.g., uid=USER,o=EDI,
+          dc=edirepository,dc=org) and PW is the corresponding password
 
 Options:
   -s, --start TEXT  Start date from which to begin search in ISO 8601
@@ -84,8 +85,7 @@ Options:
   -d, --db          Use the PASTA+ database directly (must have authorization)
   -c, --csv         Write out CSV tables in addition to the SQLite database
   -q, --quiet       Silence standard output
-  -h, --help        Show this message and exit
-
+  -h, --help        Show this message and exit.
 ```
 
 Running *counter* only requires the **SCOPE** of the data package of interest

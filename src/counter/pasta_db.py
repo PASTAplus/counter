@@ -75,7 +75,8 @@ def get_entities(scope: str, newest: bool, end: str) -> Set:
         dp = date_created.find(".")
         if dp != -1:
             # Remove fractional seconds
-            date_created = datetime.fromisoformat(date_created[:dp])
+            date_created = date_created[:dp]
+        date_created = datetime.fromisoformat(date_created)
         e.add((entity[0], date_created))
         logger.info(f"get_entities: {entity[0]} - {date_created}")
     return e

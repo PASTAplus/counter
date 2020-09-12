@@ -32,7 +32,7 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
         "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
     )
 
-    sql_count = sql_count.replace("<RID>", rid)
+    sql_count = sql_count.replace("<RID>", rid.replace("%", "%%"))
 
     if start is not None:
         sql_count += f" AND entrytime >= '{start}'"
@@ -103,6 +103,7 @@ def query(host: str, sql: str):
         logger.warning(e)
         rs = list()
     except Exception as e:
+        logger.error(sql)
         logger.error(e)
         raise e
     return rs

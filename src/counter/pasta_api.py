@@ -37,6 +37,7 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
         rids = [_.split(",")[0] for _ in r.text.strip().split("\n")]
         for rid in rids:
             logger.info(f"get_entities: {rid}")
+            rid = rid.replace("%", "%25")  # Percent encode percent literal
             rid = (
                 f"{Config.BASE_PACKAGE_URL}/data/eml/{scope}/{identifier}"
                 f"/{revision}/{rid}"
@@ -63,6 +64,7 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
         count_url += f"&fromTime={start}"
     if end is not None:
         count_url += f"&toTime={end}"
+    rid = rid.replace("%", "%25")  # Percent encode percent literal
     count_url += f"&resourceId={rid}"
     logger.info(f"get_entity_count: {count_url}")
     r = requests.get(count_url, auth=(Config.DN, Config.PW))
@@ -74,9 +76,14 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
 def get_entity_date_created(rmd_url: str) -> datetime:
     r = requests.get(rmd_url, auth=(Config.DN, Config.PW))
     r.raise_for_status()
-    rmd = etree.fromstring(r.text.encode("utf-8"))
-    date_created = rmd.find("./dateCreated").text.strip()
-    dp = date_created.find(".")
+    try:
+        rmd = etree.fromstring(r.text.encode("utf-8"))
+        date_created = rmd.find("./dateCreated").text.strip()
+        dp = date_created.find(".")
+    except Exception as e:
+        logger.error(rmd_url)
+        logger.error(r.text)
+        logger.error(e)
     if dp != -1:
         # Remove fractional seconds
         date_created = date_created[:dp]

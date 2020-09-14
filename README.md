@@ -24,42 +24,53 @@ recorded in a SQLite database.
 default, *counter* uses the PASTA+ REST API to collate and aggregate the
 download metrics. Alternatively, *counter* can use direct connections
 to PASTA+ databases to generate the same download metrics -- this alternate
-approach is much faster, but does require access privileges to PASTA+ databases.
+approach is much faster, but does require access privileges to PASTA+
+databases.
 
 ## How to install *counter*
 
-The most direct and straightforward way to install *counter* is to clone the
+The most direct way to install *counter* is to clone the
 *counter* github repository, create and activate a Python virtual environment,
 install the necessary Python dependencies found in `environment-min.yml`
 or `requirements.txt`, and then copy the file `config.py.template` to
-`config.py`:
+`config.py`.
+
+For Conda:
 
 1. `git clone https://github.com/PASTAplus/counter.git`
 1. `cd counter`
-1. `conda env create --file environment-min.yml` or `pip install
-    -r requirements.txt` (if using conda, a virtual environment will
-    be created at this step; if using another Python distribution, create
-    and activate a virtual environment per the distribution prior to doing `pip
-    install`)
+1. `conda env create --file environment-min.yml`
+1. `conda activate counter`
 1. `cp ./src/counter/config.py.template ./src/counter/config.py`
+1. `pip install -e .`
+
+
+For other Python virtual environment (assumes installed and active):
+
+1. `git clone https://github.com/PASTAplus/counter.git`
+1. `cd counter`
+1. `pip install -r requirements.txt`
+1. `cp ./src/counter/config.py.template ./src/counter/config.py`
+1. `pip install -e .`
 
 If everything is installed correctly, you should be able to run
 ```
-python counter.py --help
+counter --help
 ```
-and see the *counter* help information.
+and see the *counter* help information (see below).
 
-Development was performed in a `conda` virtual environment using the PyCharm IDE.
-To replicate and run *counter* in this manner, you must first install `anaconda3`
-from https://www.anaconda.com/products/individual, and then create a working `conda`
-virtual environment using `conda env create --file environment-min.yml`. `conda`
-will use the dependency specifications in the `environment-min.yml` file to install
-the appropriate Python3 packages. Once installed in this manner, you may execute
-*counter* by first activating the *counter* virtual environment (`conda activate
-counter`), and then using either `python counter.py <OPTIONS> SCOPE CREDENTIALS` or
-by installing *counter* using `pip install .` and then running it directly from the
-command line as `counter <OPTIONS> SCOPE CREDENTIALS`. See below for specific
-options and required arguments.
+Note: Development was performed in a `conda` virtual environment using the
+PyCharm IDE. To replicate and run *counter* in this manner, you must first
+install `anaconda3` from https://www.anaconda.com/products/individual, and
+then create a working `conda` virtual environment using `conda env create
+--file environment-min.yml`. `conda` will use the dependency specifications in
+the `environment-min.yml` file to install the appropriate Python3 packages.
+Once installed in this manner, you may execute *counter* by first activating
+the *counter* virtual environment (`conda activate counter`), and then using
+either `python counter.py <OPTIONS> SCOPE CREDENTIALS` or by installing
+*counter* using `pip install .` and then running it directly from the command
+line as `counter <OPTIONS> SCOPE CREDENTIALS`. See below for specific options
+and required arguments.
 
 ## How to use *counter*
 ```
@@ -93,22 +104,23 @@ and the **CREDENTIALS** for your EDI LDAP account, and of course, the *start*
 and *end* dates of the time period you would like to analyze:
 
 ```
-counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "<DISTINGUISHED_NAME>:<PASSWORD>"
+counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "uid=msobel,o=EDI,dc=edirepository,dc=org:PASSWORD"
 ```
 Analysis times depend on the number of data entities found within the time
 period and how busy PASTA+ is when running *counter*. In general, you can
-expect *counter* to take between 10-30 seconds per entity. And since *counter*
-utilizes a considerable number of PASTA+ REST API calls to perform the analysis,
-its execution will result in PASTA+ becoming quite busy, naturally. With this
-in mind, please be considerate of other users when running *counter* -- thanks!
+expect *counter* to take between 10-30 seconds per entity, which means that
+typical runs may be hours long. And since *counter* utilizes a considerable
+number of PASTA+ REST API calls to perform the analysis, its execution will
+result in PASTA+ becoming quite busy, naturally. With this in mind, please be
+considerate of other users when running *counter* -- thanks!
 
 ## *counter* output
 
 Data collected by *counter* is motivated by the needs of information managers
 who need to report download statistics to colleagues and funding agencies. Two
-sets of data are collected: 1) download metrics at the data entity level and 2)
-basic metadata at the data package level, including an aggregated sum of all
-data entity counts within the data package (see table schemas below).
+sets of data are collected: 1) download metrics at the data entity level and
+2) basic metadata at the data package level, including an aggregated sum of
+all data entity counts within the data package (see table schemas below).
 
 ### table *entities*:
 
@@ -127,10 +139,12 @@ data entity counts within the data package (see table schemas below).
 
 ### Thoughts on schema design
 
-The two tables provide a means for users to generate any number of reports, including a simple summary
-report by using only the *packages* table. One key aspect of the *entities* table is the `date_created`
-value: one can better understand count values by placing the data entity into a timeline perspective,
-especially if counts seem unusually low. For example, if your end date is 2020-01-01T00:00:00, and the date_created
-of a data entity is 2019-12-15T14:03:12, then a low download count may be reasonable since the data entity was only 
-avaiable 16 days for download. If, however, the date_created was 2013-12-15T4:03:12, I would be suspicious of
-the low count.
+The two tables provide a means for users to generate any number of reports,
+including a simple summary report by using only the *packages* table. One key
+aspect of the *entities* table is the `date_created` value: one can better
+understand count values by placing the data entity into a timeline
+perspective, especially if counts seem unusually low. For example, if your end
+date is 2020-01-01T00:00:00, and the date_created of a data entity is
+2019-12-15T14:03:12, then a low download count may be reasonable since the
+data entity was only avaiable 16 days for download. If, however, the
+date_created was 2013-12-15T4:03:12, I would be suspicious of the low count.

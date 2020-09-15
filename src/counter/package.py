@@ -65,6 +65,8 @@ class Package:
                 _ = pasta_db.query(Config.DB_HOST_PACKAGE, sql)
                 if len(_) == 1:
                     doi = _[0][0]
+                if Config.VERBOSE == 3:
+                    print(f"{sql} - {doi}")
             else:
                 pid = self._get_package_id()
                 scope, identifier, revision = pid.split(".")
@@ -75,6 +77,8 @@ class Package:
                 r = requests.get(doi_url, auth=(Config.DN, Config.PW))
                 r.raise_for_status()
                 doi = r.text.strip()
+                if Config.VERBOSE == 3:
+                    print(f"{doi_url} - {doi}")
         return doi
 
     def _get_package_id(self) -> str:

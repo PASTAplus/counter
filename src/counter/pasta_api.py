@@ -26,6 +26,11 @@ logger = daiquiri.getLogger(__name__)
 
 
 def get_entities(scope: str, newest: bool, end: str) -> List:
+    if end is not None:
+        end_date = datetime.fromisoformat(end)
+    else:
+        end_date = datetime.now()
+
     entities = list()
     name_url = f"{Config.BASE_PACKAGE_URL}/name/eml/"
     pids = get_pids(scope, newest)
@@ -36,7 +41,6 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
         r.raise_for_status()
         rids = [_.split(",")[0] for _ in r.text.strip().split("\n")]
         for rid in rids:
-            logger.info(f"get_entities: {rid}")
             rid = rid.replace("%", "%25")  # Percent encode percent literal
             rid = (
                 f"{Config.BASE_PACKAGE_URL}/data/eml/{scope}/{identifier}"
@@ -44,14 +48,12 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
             )
             rmd_url = rid.replace("/data/eml/", "/data/rmd/eml/")
             date_created = get_entity_date_created(rmd_url)
-            entities.append((rid, date_created))
-            logger.info(f"get_entities: {rid} - {date_created}")
-        if end is not None:
-            end_date = datetime.fromisoformat(end)
-            for entity in entities:
-                if entity[1] > end_date:
-                    logger.info(f"get_entities: removing {entity[0]}")
-                    entities.remove(entity)
+            if date_created < end_date:
+                entities.append((rid, date_created))
+                if Config.VERBOSE == 1:
+                    print(".", end="", flush=True)
+                elif Config.VERBOSE == 2:
+                    print(f"{rid} - {date_created}")
     return entities
 
 
@@ -66,10 +68,11 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
         count_url += f"&toTime={end}"
     rid = rid.replace("%", "%25")  # Percent encode percent literal
     count_url += f"&resourceId={rid}"
-    logger.info(f"get_entity_count: {count_url}")
     r = requests.get(count_url, auth=(Config.DN, Config.PW))
     r.raise_for_status()
     count = int(r.text.strip())
+    if Config.VERBOSE == 3:
+        print(f"{count_url} - {count}")
     return count
 
 
@@ -80,16 +83,17 @@ def get_entity_date_created(rmd_url: str) -> datetime:
         rmd = etree.fromstring(r.text.encode("utf-8"))
         date_created = rmd.find("./dateCreated").text.strip()
         dp = date_created.find(".")
+        if dp != -1:
+            # Remove fractional seconds
+            date_created = date_created[:dp]
+        dt = datetime.fromisoformat(date_created)
+        if Config.VERBOSE == 3:
+            print(f"{rmd_url}: {dt}")
+        return dt
     except Exception as e:
         logger.error(rmd_url)
         logger.error(r.text)
         logger.error(e)
-    if dp != -1:
-        # Remove fractional seconds
-        date_created = date_created[:dp]
-    dt = datetime.fromisoformat(date_created)
-    logger.info(f"get_entity_date_created: {dt}")
-    return dt
 
 
 def get_pids(scope: str, newest: bool) -> List:
@@ -114,9 +118,11 @@ def get_pids(scope: str, newest: bool) -> List:
                         series[f"{scope}.{identifier}"] = revision
             else:
                 pids.append(f"{scope}.{identifier}.{revision}")
-                logger.info(f"get_pids: {scope}.{identifier}.{revision}")
+                if Config.VERBOSE == 3:
+                    print(f"{scope}.{identifier}.{revision}")
     if newest:
         for scope_id, revision in series.items():
             pids.append(f"{scope_id}.{revision}")
-            logger.info(f"get_pids: {scope_id}.{revision}")
+            if Config.VERBOSE == 3:
+                print(f"{scope_id}.{revision}")
     return pids

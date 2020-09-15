@@ -41,6 +41,9 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
         sql_count += f" AND entrytime <= '{end}'"
 
     count = query(Config.DB_HOST_AUDIT, sql_count)
+    if Config.VERBOSE == 3:
+        print(f"{sql_count}")
+        print(f"{rid} - {count[0][0]}")
     return count[0][0]
 
 
@@ -69,6 +72,9 @@ def get_entities(scope: str, newest: bool, end: str) -> Set:
         sql_entities += f" AND date_created <= '{end}'"
 
     entities = query(Config.DB_HOST_PACKAGE, sql_entities)
+    if Config.VERBOSE == 3:
+        print(f"{sql_entities}")
+
     e = set()
     for entity in entities:
         date_created = entity[1].isoformat()
@@ -78,7 +84,10 @@ def get_entities(scope: str, newest: bool, end: str) -> Set:
             date_created = date_created[:dp]
         date_created = datetime.fromisoformat(date_created)
         e.add((entity[0], date_created))
-        logger.info(f"get_entities: {entity[0]} - {date_created}")
+        if Config.VERBOSE == 1:
+            print(".", end="", flush=True)
+        elif Config.VERBOSE > 1:
+            print(f"{entity[0]} - {date_created}")
     return e
 
 

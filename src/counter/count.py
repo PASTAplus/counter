@@ -12,6 +12,7 @@
 :Created:
     8/27/2020
 """
+from datetime import datetime
 import logging
 import os
 from pathlib import Path
@@ -66,7 +67,9 @@ path_help = "Directory path for which to write SQLite database and CSVs"
 newest_help = "Report only on newest data package entities"
 db_help = "Use the PASTA+ database directly (must have authorization)"
 csv_help = "Write out CSV tables in addition to the SQLite database"
-quiet_help = "Silence standard output"
+verbose_help = (
+    "Send output to standard out (-v or -vv or -vvv for increasing output)"
+)
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -81,7 +84,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 @click.option("-n", "--newest", is_flag=True, default=False, help=newest_help)
 @click.option("-d", "--db", is_flag=True, default=False, help=db_help)
 @click.option("-c", "--csv", is_flag=True, default=False, help=csv_help)
-@click.option("-q", "--quiet", is_flag=True, default=False, help=quiet_help)
+@click.option("-v", "--verbose", count=True, help=verbose_help)
 def main(
     scope: str,
     credentials: str,
@@ -91,7 +94,7 @@ def main(
     newest: bool,
     db: bool,
     csv: bool,
-    quiet: bool,
+    verbose: int,
 ):
     """
         Perform analysis of data entity downloads for the given PASTA+ SCOPE
@@ -106,6 +109,7 @@ def main(
     dn, pw = credentials.split(":")
     Config.DN = dn
     Config.PW = pw
+    Config.VERBOSE = verbose
 
     if db:
         pasta = pasta_db
@@ -122,43 +126,75 @@ def main(
     else:
         db_path = f"./{scope}"
 
+    start_time = datetime.now()
+
+    if Config.VERBOSE > 0:
+        msg = f"Identifying data entities for scope '{scope}':"
+        print(msg)
     entities = pasta.get_entities(scope, newest, end)
+    ec = len(entities)
+    if Config.VERBOSE > 0:
+        print("")
+    if Config.VERBOSE == 1:
+        print("")
+
+    if Config.VERBOSE > 0:
+        print(f"Computing counts for {ec} data entities:")
     e_db = EntityDB(db_path)
     for entity in entities:
         e = e_db.get(entity[0])
         if e is None:
             pid = entity_to_pid(entity[0])
             count = pasta.get_entity_count(entity[0], start, end)
-            if not quiet:
-                print(f"{entity[0]} - {entity[1]}: {count}")
+            if Config.VERBOSE == 1:
+                print(".", end="", flush=True)
+            elif Config.VERBOSE > 1:
+                print(f"{entity[0]} - {count}")
             e_db.insert(
                 rid=entity[0], pid=pid, date_created=entity[1], count=count
             )
+    if Config.VERBOSE > 0:
+        print("")
+    if Config.VERBOSE == 1:
+        print("")
 
+    pc = e_db.get_pid_count()
+    if Config.VERBOSE > 0:
+        msg = (
+            f"Obtaining title, DOI, and data entity names for "
+            f"{pc} data packages:"
+        )
+        print(msg)
     pids = e_db.get_pids()
     p_db = PackageDB(db_path)
     for pid in pids:
         if p_db.get(pid[0]) is None:
-            if not quiet:
-                print(pid[0])
             eml = get_eml(pid[0])
             p = Package(eml)
+            if Config.VERBOSE == 1:
+                print(".", end="", flush=True)
+            elif Config.VERBOSE > 1:
+                print(f"{pid[0]} - {p.title} - {p.doi}")
             entities = e_db.get_entities_by_pid(pid[0])
             count = 0
             for entity in entities:
                 count += entity.count
-                if not quiet:
-                    print("    " + entity.rid)
                 entity_name = p.get_entity_name(entity.rid)
+                if Config.VERBOSE == 1:
+                    print(".", end="", flush=True)
+                elif Config.VERBOSE > 1:
+                    print(f"    {entity_name} - {entity.rid}")
                 e_db.update(entity.rid, entity_name)
             p_db.insert(pid=pid[0], doi=p.doi, title=p.title, count=count)
+    if Config.VERBOSE > 0:
+        print("")
+    if Config.VERBOSE == 1:
+        print("")
 
     if csv:
         entities_path = f"{db_path}-entities.csv"
         with open(entities_path, "w") as f:
             header = "rid,pid,date_created,count,name\n"
-            if not quiet:
-                print(header, end="")
             f.write(header)
             entities = e_db.get_all()
             for entity in entities:
@@ -166,14 +202,10 @@ def main(
                     f"{entity.rid},{entity.pid},{entity.date_created},"
                     f'{entity.count},"{entity.name}"\n'
                 )
-                if not quiet:
-                    print(row, end="")
                 f.write(row)
         packages_path = f"{db_path}-packages.csv"
         with open(packages_path, "w") as f:
             header = "pid,doi,title,count\n"
-            if not quiet:
-                print(header, end="")
             f.write(header)
             packages = p_db.get_all()
             for package in packages:
@@ -181,9 +213,16 @@ def main(
                     f"{package.pid},{package.doi},"
                     f'"{package.title}",{package.count}\n'
                 )
-                if not quiet:
-                    print(row, end="")
                 f.write(row)
+
+    if Config.VERBOSE > 0:
+        end_time = datetime.now()
+        work_time = (end_time - start_time).seconds // 60
+        msg = (
+            f"Total work time for {ec} data entities in {pc} data packages is "
+            f"{work_time} minutes"
+        )
+        print(msg)
 
     return 0
 

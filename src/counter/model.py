@@ -130,7 +130,6 @@ class EntityDB:
             )
         except NoResultFound as ex:
             logger.error(ex)
-            self.session.rollback()
         return e
 
     def get_all(self) -> Query:
@@ -149,8 +148,15 @@ class EntityDB:
             e = self.session.query(Entity.pid).distinct()
         except NoResultFound as ex:
             logger.error(ex)
-            self.session.rollback()
         return e
+
+    def get_pid_count(self):
+        c = 0
+        try:
+            c = self.session.query(Entity.pid).distinct().count()
+        except NoResultFound as ex:
+            logger.error(ex)
+        return c
 
     def get_entities_by_pid(self, pid: str):
         e = None
@@ -161,7 +167,6 @@ class EntityDB:
             )
         except NoResultFound as ex:
             logger.error(ex)
-            self.session.rollback()
         return e
 
     def insert(

@@ -95,7 +95,8 @@ Options:
   -n, --newest      Report only on newest data package entities
   -d, --db          Use the PASTA+ database directly (must have authorization)
   -c, --csv         Write out CSV tables in addition to the SQLite database
-  -q, --quiet       Silence standard output
+  -v, --verbose     Send output to standard out (-v or -vv or -vvv for
+                    increasing output)
   -h, --help        Show this message and exit.
 ```
 

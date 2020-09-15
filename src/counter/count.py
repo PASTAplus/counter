@@ -55,6 +55,15 @@ def get_eml(pid: str) -> str:
     return r.text
 
 
+def get_work_time(start_time: datetime, end_time: datetime) -> str:
+    delta = end_time - start_time
+    total_minutes, seconds = divmod(delta.seconds, 60)
+    hours, minutes = divmod(total_minutes, 60)
+    work_time = f"{hours}:{minutes}:{seconds}"
+    return work_time
+
+
+
 start_help = (
     "Start date from which to begin search in ISO 8601 format"
     "(default is 2013-01-01T00:00:00)"
@@ -215,12 +224,11 @@ def main(
                 )
                 f.write(row)
 
+    work_time = get_work_time(start_time, datetime.now())
     if Config.VERBOSE > 0:
-        end_time = datetime.now()
-        work_time = (end_time - start_time).seconds // 60
         msg = (
             f"Total work time for {ec} data entities in {pc} data packages is "
-            f"{work_time} minutes"
+            f"{work_time}"
         )
         print(msg)
 

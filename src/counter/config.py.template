@@ -27,6 +27,7 @@ class Config:
     PW = None
 
     USE_DB = False
+    VERBOSE = 0
 
     BASE_PACKAGE_URL = "https://pasta.lternet.edu/package"
     BASE_AUDIT_URL = "https://pasta.lternet.edu/audit"

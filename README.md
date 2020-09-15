@@ -102,10 +102,12 @@ Options:
 
 Running *counter* only requires the **SCOPE** of the data package of interest
 and the **CREDENTIALS** for your EDI LDAP account, and of course, the *start*
-and *end* dates of the time period you would like to analyze:
+and *end* dates of the time period you would like to analyze. It is most
+informative if you use either the `-v` or `-vv` flag to provide runtime
+feedback. For a short running example:
 
 ```
-counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" knb-lter-sev "uid=msobel,o=EDI,dc=edirepository,dc=org:PASSWORD"
+counter -s "2019-01-01T00:00:00" -e "2020-01-01T00:00:00" -v knb-lter-nin "uid=msobel,o=EDI,dc=edirepository,dc=org:PASSWORD"
 ```
 Analysis times depend on the number of data entities found within the time
 period and how busy PASTA+ is when running *counter*. In general, you can

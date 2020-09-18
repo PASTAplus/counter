@@ -37,7 +37,7 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
     for pid in pids:
         scope, identifier, revision = pid.split(".")
         url = f"{name_url}/{scope}/{identifier}/{revision}"
-        r = requests.get(url, auth=(Config.DN, Config.PW))
+        r = requests.get(url, auth=Config.AUTH)
         r.raise_for_status()
         rids = [_.split(",")[0] for _ in r.text.strip().split("\n")]
         for rid in rids:
@@ -68,7 +68,7 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
         count_url += f"&toTime={end}"
     rid = rid.replace("%", "%25")  # Percent encode percent literal
     count_url += f"&resourceId={rid}"
-    r = requests.get(count_url, auth=(Config.DN, Config.PW))
+    r = requests.get(count_url, auth=Config.AUTH)
     r.raise_for_status()
     count = int(r.text.strip())
     if Config.VERBOSE == 3:
@@ -77,7 +77,7 @@ def get_entity_count(rid: str, start: str, end: str) -> int:
 
 
 def get_entity_date_created(rmd_url: str) -> datetime:
-    r = requests.get(rmd_url, auth=(Config.DN, Config.PW))
+    r = requests.get(rmd_url, auth=Config.AUTH)
     r.raise_for_status()
     try:
         rmd = etree.fromstring(r.text.encode("utf-8"))
@@ -100,12 +100,12 @@ def get_pids(scope: str, newest: bool) -> List:
     pids = list()
     series = dict()
     scope_url = Config.BASE_PACKAGE_URL + f"/eml/{scope}"
-    r = requests.get(scope_url, auth=(Config.DN, Config.PW))
+    r = requests.get(scope_url, auth=Config.AUTH)
     r.raise_for_status()
     identifiers = [_.strip() for _ in r.text.split("\n")]
     for identifier in identifiers:
         revision_url = scope_url + f"/{identifier}"
-        r = requests.get(revision_url, auth=(Config.DN, Config.PW))
+        r = requests.get(revision_url, auth=Config.AUTH)
         r.raise_for_status()
         revisions = [_.strip() for _ in r.text.split("\n")]
         for revision in revisions:

@@ -74,7 +74,7 @@ class Package:
                     f"{Config.BASE_PACKAGE_URL}/doi/eml/{scope}/"
                     f"{identifier}/{revision}"
                 )
-                r = requests.get(doi_url, auth=(Config.DN, Config.PW))
+                r = requests.get(doi_url, auth=Config.AUTH)
                 r.raise_for_status()
                 doi = r.text.strip()
                 if Config.VERBOSE == 3:

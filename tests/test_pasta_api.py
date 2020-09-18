@@ -14,7 +14,7 @@
 """
 from datetime import datetime
 
-import pytest
+import requests
 
 import counter.pasta_api as pasta_api
 
@@ -55,8 +55,12 @@ def test_get_entity_count():
     )
     start = "20200101T00:00:00"
     end = "20200830T00:00:00"
-    count = pasta_api.get_entity_count(count_url, start, end)
-    assert isinstance(count, int)
+    try:
+        count = pasta_api.get_entity_count(count_url, start, end)
+        assert isinstance(count, int)
+    except requests.exceptions.HTTPError as ex:
+        assert isinstance(ex, requests.exceptions.HTTPError)
+
 
 
 

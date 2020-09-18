@@ -50,7 +50,7 @@ def get_eml(pid: str) -> str:
         Config.BASE_PACKAGE_URL
         + f"/metadata/eml/{scope}/{identifier}/{revision}"
     )
-    r = requests.get(url, auth=(Config.DN, Config.PW))
+    r = requests.get(url, auth=Config.AUTH)
     r.raise_for_status()
     return r.text
 
@@ -116,8 +116,7 @@ def main(
                 dc=edirepository,dc=org) and PW is the corresponding password
     """
     dn, pw = credentials.split(":")
-    Config.DN = dn
-    Config.PW = pw
+    Config.AUTH = (dn, pw)
     Config.VERBOSE = verbose
 
     if db:

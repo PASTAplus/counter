@@ -22,7 +22,7 @@ from counter.package import Package
 @pytest.fixture()
 def package():
     package_url = f"{Config.BASE_PACKAGE_URL}/metadata/eml/knb-lter-nin/1/1"
-    r = requests.get(package_url, auth=(Config.DN, Config.PW))
+    r = requests.get(package_url, auth=Config.AUTH)
     r.raise_for_status()
     return Package(r.text)
 

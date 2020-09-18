@@ -23,8 +23,7 @@ class Config:
     DB_DB = 'pasta'
     DB_DRIVER = 'postgresql+psycopg2'
 
-    DN = None
-    PW = None
+    AUTH = None
 
     USE_DB = False
     VERBOSE = 0

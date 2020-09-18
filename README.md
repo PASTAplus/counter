@@ -1,3 +1,5 @@
+![counter](https://github.com/actions/PASTAplus/workflows/Counter-basic/badge.svg)
+
 # counter
 Reports data package and entity read counts from the EDI data repository, and
 more...

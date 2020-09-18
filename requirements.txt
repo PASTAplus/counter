@@ -1,4 +1,4 @@
-python==3.8.5
+# python==3.8.5
 requests==2.24.0
 lxml==4.5.2
 daiquiri==2.1.1

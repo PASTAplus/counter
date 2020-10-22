@@ -34,4 +34,3 @@ def test_get_entity_count():
     end = "20200830T00:00:00"
     count = pasta_db.get_entity_count(count_url, start, end)
     assert isinstance(count, int)
-

@@ -60,7 +60,3 @@ def test_get_entity_count():
         assert isinstance(count, int)
     except requests.exceptions.HTTPError as ex:
         assert isinstance(ex, requests.exceptions.HTTPError)
-
-
-
-

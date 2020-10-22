@@ -96,18 +96,19 @@ class Package:
         datatables = self._eml.findall("./dataset/dataTable")
         for datatable in datatables:
             name = get_entity_name(datatable, rid)
-            if name is not None: return name
+            if name is not None:
+                return name
         otherentities = self._eml.findall("./dataset/otherEntity")
         for otherentity in otherentities:
             name = get_entity_name(otherentity, rid)
-            if name is not None: return name
+            if name is not None:
+                return name
         spatialrasters = self._eml.findall("./dataset/spatialRaster")
         for spatialraster in spatialrasters:
             name = get_entity_name(spatialraster, rid)
-            if name is not None: return name
+            if name is not None:
+                return name
         spatialvectors = self._eml.findall("./dataset/spatialVector")
         for spatialvector in spatialvectors:
             name = get_entity_name(spatialvector, rid)
         return name
-
-

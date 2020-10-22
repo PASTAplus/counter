@@ -59,8 +59,8 @@ def get_entities(scope: str, newest: bool, end: str) -> List:
 
 def get_entity_count(rid: str, start: str, end: str) -> int:
     count_url = (
-        Config.BASE_AUDIT_URL +
-        "/count?serviceMethod=readDataEntity&status=200"
+        Config.BASE_AUDIT_URL
+        + "/count?serviceMethod=readDataEntity&status=200"
     )
     if start is not None:
         count_url += f"&fromTime={start}"

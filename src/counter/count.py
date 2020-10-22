@@ -30,7 +30,7 @@ from counter.package import Package
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/counter.log"
 daiquiri.setup(
-    level=logging.WARN, outputs=(daiquiri.output.File(logfile), "stdout",)
+    level=logging.WARN, outputs=(daiquiri.output.File(logfile), "stdout")
 )
 logger = daiquiri.getLogger(__name__)
 
@@ -61,7 +61,6 @@ def get_work_time(start_time: datetime, end_time: datetime) -> str:
     hours, minutes = divmod(total_minutes, 60)
     work_time = f"{hours}:{minutes}:{seconds}"
     return work_time
-
 
 
 start_help = (

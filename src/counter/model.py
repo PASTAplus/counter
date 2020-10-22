@@ -58,38 +58,20 @@ class PackageDB:
 
     def get_all(self) -> Query:
         try:
-            p = (
-                self.session.query(Package)
-                .order_by(Package.pid.asc())
-            )
+            p = self.session.query(Package).order_by(Package.pid.asc())
         except NoResultFound as ex:
             logger.error(ex)
         return p
 
     def get(self, pid: str) -> Query:
         try:
-             p = (
-                self.session.query(Package)
-                .filter(Package.pid == pid)
-                .first()
-            )
+            p = self.session.query(Package).filter(Package.pid == pid).first()
         except NoResultFound as ex:
             logger.error(ex)
         return p
 
-    def insert(
-        self,
-        pid: str,
-        doi: str,
-        title: str,
-        count: int
-    ):
-        p = Package(
-            pid=pid,
-            doi=doi,
-            title=title,
-            count=count
-        )
+    def insert(self, pid: str, doi: str, title: str, count: int):
+        p = Package(pid=pid, doi=doi, title=title, count=count)
         try:
             self.session.add(p)
             self.session.commit()
@@ -123,21 +105,14 @@ class EntityDB:
     def get(self, rid: str):
         e = None
         try:
-            e = (
-                self.session.query(Entity)
-                .filter(Entity.rid == rid)
-                .first()
-            )
+            e = self.session.query(Entity).filter(Entity.rid == rid).first()
         except NoResultFound as ex:
             logger.error(ex)
         return e
 
     def get_all(self) -> Query:
         try:
-            e = (
-                self.session.query(Entity)
-                .order_by(Entity.rid.asc())
-            )
+            e = self.session.query(Entity).order_by(Entity.rid.asc())
         except NoResultFound as ex:
             logger.error(ex)
         return e
@@ -161,10 +136,7 @@ class EntityDB:
     def get_entities_by_pid(self, pid: str):
         e = None
         try:
-            e = (
-                self.session.query(Entity)
-                .filter(Entity.pid == pid)
-            )
+            e = self.session.query(Entity).filter(Entity.pid == pid)
         except NoResultFound as ex:
             logger.error(ex)
         return e
@@ -178,11 +150,7 @@ class EntityDB:
         count: int = 0,
     ):
         e = Entity(
-            rid=rid,
-            pid=pid,
-            date_created=date_created,
-            count=count,
-            name=name
+            rid=rid, pid=pid, date_created=date_created, count=count, name=name
         )
         try:
             self.session.add(e)
@@ -196,15 +164,10 @@ class EntityDB:
 
     def update(self, rid: str, name: str):
         try:
-            e = (
-                self.session.query(Entity)
-                .filter(Entity.rid == rid)
-                .first()
-            )
+            e = self.session.query(Entity).filter(Entity.rid == rid).first()
             e.name = name
             self.session.commit()
         except NoResultFound as ex:
             logger.error(ex)
             self.session.rollback()
         return e
-

@@ -3,4 +3,4 @@ lxml==4.7.1
 daiquiri==3.0.0
 click==8.0.3
 sqlalchemy==1.4.30
-psycopg2-bin==2.9.3
+psycopg2==2.9.3

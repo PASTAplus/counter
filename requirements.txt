@@ -1,7 +1,6 @@
-# python==3.8.5
-requests==2.24.0
-lxml==4.5.2
-daiquiri==2.1.1
-click==7.1.2
-sqlalchemy==1.3.19
-psycopg2==2.8.5
+requests==2.27.1
+lxml==4.7.1
+daiquiri==3.0.0
+click==8.0.3
+sqlalchemy==1.4.30
+psycopg2-bin==2.9.3

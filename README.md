@@ -99,6 +99,7 @@ Options:
   -c, --csv         Write out CSV tables in addition to the SQLite database
   -v, --verbose     Send output to standard out (-v or -vv or -vvv for
                     increasing output)
+  -o, --one         Include downloads from DataONE
   -h, --help        Show this message and exit.
 ```
 

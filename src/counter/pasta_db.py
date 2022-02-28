@@ -25,12 +25,21 @@ from counter.config import Config
 logger = daiquiri.getLogger(__name__)
 
 
-def get_entity_count(rid: str, start: str, end: str) -> int:
-    sql_count = (
-        "SELECT COUNT(*) FROM auditmanager.eventlog "
-        "WHERE servicemethod='readDataEntity' AND statuscode=200 "
-        "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
-    )
+def get_entity_count(rid: str, start: str, end: str, one: bool) -> int:
+
+    if one:
+        sql_count = (
+            "SELECT COUNT(*) FROM auditmanager.eventlog "
+            "WHERE servicemethod='readDataEntity' AND statuscode=200 "
+            "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
+        )
+    else:
+        sql_count = (
+            "SELECT COUNT(*) FROM auditmanager.eventlog "
+            "WHERE servicemethod='readDataEntity' AND statuscode=200 "
+            "AND useragent NOT LIKE '%%DataONE%%' "
+            "AND userid NOT LIKE '%%robot%%' AND resourceid='<RID>'"
+        )
 
     sql_count = sql_count.replace("<RID>", rid.replace("%", "%%"))
 

@@ -78,6 +78,7 @@ csv_help = "Write out CSV tables in addition to the SQLite database"
 verbose_help = (
     "Send output to standard out (-v or -vv or -vvv for increasing output)"
 )
+one_help = "Include downloads from DataONE"
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -93,6 +94,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 @click.option("-d", "--db", is_flag=True, default=False, help=db_help)
 @click.option("-c", "--csv", is_flag=True, default=False, help=csv_help)
 @click.option("-v", "--verbose", count=True, help=verbose_help)
+@click.option("-o", "--one", is_flag=True, default=False, help=one_help)
 def main(
     scope: str,
     credentials: str,
@@ -103,6 +105,7 @@ def main(
     db: bool,
     csv: bool,
     verbose: int,
+    one: bool,
 ):
     """
         Perform analysis of data entity downloads for the given PASTA+ SCOPE
@@ -152,7 +155,7 @@ def main(
         e = e_db.get(entity[0])
         if e is None:
             pid = entity_to_pid(entity[0])
-            count = pasta.get_entity_count(entity[0], start, end)
+            count = pasta.get_entity_count(entity[0], start, end, one)
             if Config.VERBOSE == 1:
                 print(".", end="", flush=True)
             elif Config.VERBOSE > 1:

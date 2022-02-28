@@ -25,7 +25,7 @@ with open(path.join(here, "LICENSE"), encoding="utf-8") as f:
 
 setup(
     name="counter",
-    version="2020.09.11",
+    version="2022.02.27",
     description="Reports data package and entity read counts, and more...",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -38,12 +38,12 @@ setup(
     package_dir={"": "src"},
     python_requires=">=3.8.*",
     install_requires=[
-        "click >= 8.0.3",
+        "click >= 8.0.4",
         "daiquiri >= 3.0.0",
-        "lxml >= 4.7.1",
+        "lxml >= 4.8.0",
         "psycopg2 >= 2.9.3",
         "requests >= 2.27.1",
-        "sqlalchemy >= 1.4.30",
+        "sqlalchemy >= 1.4.31",
     ],
     entry_points={"console_scripts": ["counter=counter.count:main"]},
     classifiers=["License :: OSI Approved :: Apache Software License"],

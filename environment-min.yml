@@ -3,12 +3,12 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.8
-  - requests=2.27.1
-  - lxml=4.7.1
-  - daiquiri=4.7.1
-  - click=8.0.3
-  - sqlalchemy=1.4.30
-  - psycopg2=2.9.3
-  - pytest=6.2.5
+  - python=3.12
+  - requests
+  - lxml
+  - daiquiri
+  - click
+  - sqlalchemy=1.4.54
+  - psycopg2
+  - pytest
 prefix: /home/servilla/anaconda3/envs/counter

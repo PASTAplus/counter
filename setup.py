@@ -36,7 +36,7 @@ setup(
     include_package_data=True,
     exclude_package_data={"": ["settings.py, properties.py, config.py"]},
     package_dir={"": "src"},
-    python_requires=">=3.8.*",
+    python_requires=">=3.8",
     install_requires=[
         "click >= 8.0.4",
         "daiquiri >= 3.0.0",

@@ -3,12 +3,12 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.12
+  - python
   - requests
   - lxml
   - daiquiri
   - click
-  - sqlalchemy=1.4.54
+  - sqlalchemy<2
   - psycopg2
   - pytest
 prefix: /home/servilla/anaconda3/envs/counter
